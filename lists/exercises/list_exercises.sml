@@ -197,7 +197,25 @@ fun all_primes(xs : int list) =
 
 (* Construct a function every_second that returns every second element in the list of integers xs *)
 
+fun every_second(xs : int list) =
+	if null xs orelse null (tl xs) then []
+	else hd (tl xs)::every_second(tl (tl xs))
+
 (* Construct a function every_nth that returns every nth element in the list of integers xs *)
+
+fun every_nth(n : int, xs : int list) =
+	let
+		fun remove_n(n : int, xs : int list) =
+			if null xs then []
+			else if n = 0 then xs
+			else remove_n(n - 1, tl xs)
+
+		val head = hd xs;
+		val remainder = remove_n(n, xs);
+	in
+		if null remainder then [head]
+		else head::every_nth(n, remainder)
+	end
 
 (* Construct a function nth_largest which return the n-th largest element in the list of integers xs *)
 
@@ -220,3 +238,7 @@ fun all_primes(xs : int list) =
 (* Construct a function insertion_sort which performs the recursive implementation of the insertion sort sorting algorithm on the list of integers xs *)
 
 (* Construct a function bubble_sort which performs the recursive implementation of the bubble sort sorting algorithm on the list of integers xs *)
+
+(* Construct a function rle which encodes a list of characters using the run-length encoding algorithm.*)
+
+(* Construct a function mat_multiply which takes two matrices represented as lists of lists and returns their matrix product.*)
