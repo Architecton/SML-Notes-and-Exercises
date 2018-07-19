@@ -217,17 +217,57 @@ fun every_nth(n : int, xs : int list) =
 		else head::every_nth(n, remainder)
 	end
 
-(* Construct a function nth_largest which return the n-th largest element in the list of integers xs *)
-
-(* Construct a function nth_smallest which returns the n-th smallest element in the list of integers xs *)
-
 (* Construct a function intersection which returns a list of elements that are both in list of integers xs and list of integers ys *)
 
-(* Construct a function intersection which returns a list of elements that are both in list of integers xs and list of integers ys *)
+fun intersection (xs : int list, ys : int list) =
+	let
+		fun contains (xs : int list, el : int) =
+			if null xs then false
+			else if hd xs = el then true
+			else contains (tl xs, el)
+	in
+		if null xs orelse null ys then []
+		else if contains (xs, hd ys) then (hd ys) :: intersection(xs, tl ys)
+		else intersection(xs, tl ys)
+	end
 
-(* Construct a funtion difference which returns removes from list of integers xs all elements that are also contained in ys *)
+(* Construct a funtion difference which returns a list of integers that are in xs but not also in ys *)
+
+fun difference (xs : int list, ys : int list) =
+	let
+		fun contains_element (el : int, l : int list) : bool =
+			if null l then false
+			else if hd l = el then true
+			else contains_element(el, tl l)
+	in	
+		if null xs then []
+		else if null ys then xs
+		else if not (contains_element(hd xs, ys)) then hd xs :: difference(tl xs, ys)
+		else difference(tl xs, ys)
+	end
 
 (* Construct a function swap that swaps elements at indices i and j in the list of integers xs *)
+
+fun swap(xs : int list, i : int, j : int) =
+	let
+		(* get_nth: get nth element in list l *)
+	 	fun get_nth (n : int, l : int list) =
+	 		if n = 0 then hd l
+	 		else get_nth(n - 1, tl l)
+
+	 	(* set_nth: set nth element in list l to el and return resulting list *)
+	 	fun set_nth (n : int, el : int, l : int list) =
+	 		if n = 0 then el :: tl l
+	 		else hd l :: set_nth(n - 1, el, tl l)
+
+	 	(* Save ith and jth elements in xs *)
+	 	val ith = get_nth(i, xs)
+	 	val jth = get_nth(j, xs)
+	 in
+	 	(* Get reulting list. Note the nested function calls. *)
+	 	set_nth(j, ith, set_nth(i, jth, xs))
+	 end 
+
 
 (* Construct a function index_max which returns the index of the largest element in the list of integers xs *)
 
