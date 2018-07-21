@@ -268,10 +268,43 @@ fun swap(xs : int list, i : int, j : int) =
 	 	set_nth(j, ith, set_nth(i, jth, xs))
 	 end 
 
+(* Construct a function index which returns the index of element el in list *)
+(* Return negative number if el is not in list. *)
+fun index (el : int, xs : int list) : int =
+	if null xs then ~1
+	else if null (tl xs) then 
+		if hd xs = el then 0
+		else ~1000000000
+	else if hd xs = el then 0
+	else 1 + index(el, tl xs);
+
+
+
+
+(* Construct a function max which finds the maximum element in an int list *)
+
+(*Find the max between two comparable items*)
+
+(*Find the max item in list which calls the maxL function recursively*)
+fun max(xs : int list) =
+	let
+		fun compare(a : int, b : int) : int = if a > b then a else b
+	in
+		if null xs then 0
+		else compare(hd xs, max(tl xs))
+	end 
 
 (* Construct a function index_max which returns the index of the largest element in the list of integers xs *)
+fun index_max(xs : int list) : int =
+	let
+		val max_val = max(xs);
+	in
+		index(max_val, xs)
+	end
 
 (* Construct a function index_min which returns the index of the smallest element in the list of integers xs *)
+
+(* TODO - 22. 7. 2018 *)
 
 (* Construct a function selection_sort which performs the recursive implementation of the selection sort sorting algorithm on the list of integers xs *)
 
