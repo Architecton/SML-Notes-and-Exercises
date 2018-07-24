@@ -1,0 +1,5 @@
+mon - type_and_datatype
+tue - signature_and_structure
+wed - currying and higher order functions
+thur - streams
+fri - trees

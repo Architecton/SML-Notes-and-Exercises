@@ -282,10 +282,6 @@ fun index (el : int, xs : int list) : int =
 
 
 (* Construct a function max which finds the maximum element in an int list *)
-
-(*Find the max between two comparable items*)
-
-(*Find the max item in list which calls the maxL function recursively*)
 fun max(xs : int list) =
 	let
 		fun compare(a : int, b : int) : int = if a > b then a else b
@@ -294,17 +290,31 @@ fun max(xs : int list) =
 		else compare(hd xs, max(tl xs))
 	end 
 
+(* Connstruct a function min which finds the minimum element in an int list *)
+fun min(xs : int list) = 
+	let
+		fun compare(a : int, b : int) : int = if a < b then a else b
+	in
+		if null xs then 0
+		else compare(hd xs, min(tl xs))
+	end
+
+
 (* Construct a function index_max which returns the index of the largest element in the list of integers xs *)
 fun index_max(xs : int list) : int =
 	let
 		val max_val = max(xs);
 	in
 		index(max_val, xs)
-	end
+	add_end
 
 (* Construct a function index_min which returns the index of the smallest element in the list of integers xs *)
-
-(* TODO - 22. 7. 2018 *)
+fun index_min(xs: int list) : int =
+	let
+		val min_val = min(xs);
+	in
+		index(min_val, xs)
+	end
 
 (* Construct a function selection_sort which performs the recursive implementation of the selection sort sorting algorithm on the list of integers xs *)
 

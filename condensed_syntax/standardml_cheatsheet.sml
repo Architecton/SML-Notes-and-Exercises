@@ -4,11 +4,6 @@ val real_division = 14.0 / 4.0  (* gives 3.5 *)
 val int_division  = 14 div 4    (* gives 3, rounding down *)
 val int_remainder = 14 mod 4    (* gives 2, since 3*4 = 12 *)
 
-(* ~ is actually sometimes a function (e.g. when put in front of variables) *)
-val negative_rent = ~(rent)  (* Would also have worked if rent were a "real" *)
-
-(* Besides booleans, ints and reals, Standard ML also has chars and strings: *)
-val foo = "Hello, World!\n"  (* The \n is the escape sequence for linebreaks *)
 val one_letter = #"a"        (* That funky syntax is just one character, a *)
 
 val combined = "Hello " ^ "there, " ^ "fellow!\n"  (* Concatenate strings *)
@@ -31,47 +26,7 @@ val _ = print (bob ^ "\n")            (* For good measure, add a linebreak *)
 (* Lists of the same kind can be appended using the @ ("append") operator *)
 val guest_list = [ "Mom", "Dad" ] @ [ "Aunt", "Uncle" ]
 
-(* Lists can only contain one kind of thing... *)
-(* val bad_list = [ 1, "Hello", 3.14159 ] : ??? list *)
-
-
-(* Tuples, on the other hand, can contain a fixed number of different things *)
-val person1 = ("Simon", 28, 3.14159)  (* : string * int * real *)
-
-(* You can even have tuples inside lists and lists inside tuples *)
-val likes = [ ("Alice", "ice cream"),
-              ("Bob",   "hot dogs"),
-              ("Bob",   "Alice") ]     (* : (string * string) list *)
-
-val mixup = [ ("Alice", 39),
-              ("Bob",   37),
-              ("Eve",   41) ]  (* : (string * int) list *)
-
-val good_bad_stuff =
-  (["ice cream", "hot dogs", "chocolate"],
-   ["liver", "paying the rent" ])           (* : string list * string list *)
-
-
-(* Records are tuples with named slots *)
-val rgb = { r=0.23, g=0.56, b=0.91 } (* : {b:real, g:real, r:real} *)
-
-(* You don't need to declare their slots ahead of time. Records with
-   different slot names are considered different types, even if their
-   slot value types match up. For instance... *)
-
-val Hsl = { H=310.3, s=0.51, l=0.23 } (* : {H:real, l:real, s:real} *)
-val Hsv = { H=310.3, s=0.51, v=0.23 } (* : {H:real, s:real, v:real} *)
-
-(* ...trying to evaluate `Hsv = Hsl` or `rgb = Hsl` would give a type
-   error. While they're all three-slot records composed only of `real`s,
-   they each have different names for at least some slots. *)
-
-(* You can use hash notation to get values out of tuples. *)
-
-val H = #H Hsv (* : real *)
-val s = #s Hsl (* : real *)
-
-
+(* Raising an exception *)
 val x = 42
 fun answer(question) =
     if question = "What is the meaning of life, the universe and everything?"
@@ -106,7 +61,7 @@ datatype temp =
 
 (* Create variable of type temp *)
 val current_temp = C(21);
-
+sc
 fun temp_to_f t =
     case t of
       C x => x * (9.0 / 5.0) + 32.0
