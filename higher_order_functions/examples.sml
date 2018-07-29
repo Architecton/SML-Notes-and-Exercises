@@ -1,4 +1,4 @@
-(* Simple example - make a function that takes an integer and returns an intiger from anonymous function passed as an argument *)
+(* Simple example - make a function that takes an integer and returns an integer from anonymous function passed as an argument *)
 fun make_int_function(int_function : int -> int) : int -> int =
 	int_function
 
