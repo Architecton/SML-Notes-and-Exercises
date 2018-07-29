@@ -3,5 +3,5 @@ tue - signature_and_structure (also data structures)
 wed - currying and higher order functions (also fold)
 thur - streams
 fri - trees
-sat - list functions
+sat - list functions, exceptions
 sun - trees and streams
