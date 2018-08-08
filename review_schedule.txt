@@ -1,7 +1,7 @@
-mon - type_and_datatype (also data structures)
-tue - signature_and_structure (also data structures)
-wed - currying and higher order functions (also fold)
-thur - streams
+mon - type_and_datatype (also data structures), trees
+tue - signature_and_structure (also data structures), file_IO
+wed - currying and higher order functions (also fold), some and none
+thur - streams, trees
 fri - trees
-sat - list functions, exceptions
+sat - list functions, exceptions, file_IO
 sun - trees and streams

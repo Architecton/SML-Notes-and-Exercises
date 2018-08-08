@@ -8,4 +8,3 @@ fun some_function [] = raise Empty
 fun double_list xs = some_function xs
 					handle Empty  => []
 						|  Fail _ => []
-
