@@ -132,9 +132,40 @@ fun sieve (s : int stream) : int stream =
 	
 
 (* discard_n: return stream left after removing first n elements. *)
+fun discard_n(s : 'a stream) (n : int) : 'a stream =
+	if n = 0 then s (* Base case: if discarding 0 elements, return same stream. *)
+	else 
+		case s of Null 		 => raise Empty (* Raise Empty exception if taking n > 0 elements from Null stream. *)
+				| Cons(h, t) => discard_n (t()) (n-1) (* discard head and make recursive call to discard n - 1 elements. *)
 
 
 (* rle: encode stream using the rle encoding algorithm. Return ordered pair (int * 'a). *)
+(* NOTE: A type with two quotation marks in front of it instead of one is an equality type, which means that the = operator works on it. 
+That also means that you can't call your function on things that are not equality types,  though.*)
+fun rle(s : ''a stream) : (int * ''a) stream =
+	let
+		(*count_next: count next string of occurances of element comp in stream s.*)
+		fun count_next (comp : ''a) (s : ''a stream) : int =
+			case s of 
+				Null 	   => 0
+			|	Cons(h, t) => if h = comp then 1 + count_next comp (t())
+								else 0
 
+		(* go_to_next: return stream with string of elements equal to comp removed. *)
+		fun go_to_next (comp : ''a) (s : ''a stream) : ''a stream =
+			case s of
+				Null 	   => Null (* Got to end of stream return Null stream. *)
+			|	Cons(h, t) => if h = comp then go_to_next comp (t()) (* If next element equal to comp, skip it. *)
+							  else Cons(h, t) (* Else return stream starting from new element. *)
+	in
+		case s of
+			Null 	   => Null (* If Null (empty) stream, return Null stream. *)
+		|	Cons(h, t) => Cons((count_next h s, h), fn () => rle (go_to_next h (t()))) (* Count length of string of elements equal to next element in stream 
+		and make ordered pair (num_repetitions, element). Then make recursive call on stream with removed string of elements equal to head. *)
+	end
 
-(* foldl_n: perform fold on first n elements of list. *)
+(* multiples: create stream of multiples of n *)
+
+(* fold_n: perform fold on first n elements of list. *)
+
+(* fold_n: perform fold operation on stream and return stream of accumulator values. *)

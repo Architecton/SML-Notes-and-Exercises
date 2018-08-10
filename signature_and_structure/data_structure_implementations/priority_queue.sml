@@ -1,122 +1,63 @@
+(* Signature specifying the priority queue ADT functionality *)
 signature PRIORITY_QUEUE =
 sig
-    type element
-    val priority : element -> int
-    type queue
-    val empty : queue
-    val put : element -> queue -> queue
-    val get : queue -> element option * queue
+    type 'a element 									(* type of element in queue *)
+    val priority : 'a element -> int 					(* priority function : map from element to its priority *)
+    type 'a queue 										(* type queue: type respresenting the queue *)
+    val empty : 'a queue 								(* value representing the empty queue. *)
+    exception EmptyQueue 								(* exception for signaling illegal operations on an empty queue *)
+    val enqueue : 'a element -> 'a queue -> 'a queue 	(* put: put element in queue *)
+    val front : 'a queue -> 'a element 					(* get: get next element from queue *)
+    val dequeue : 'a queue -> 'a queue 					(* dequeue: return queue with element at front removed *)
 end
 
-structure MyFirstQueue : PRIORITY_QUEUE =
+(* structure implementing the PRIORITY_QUEUE interface *)
+structure Queue :> PRIORITY_QUEUE where type 'a element = int * 'a =
 struct
-  type element = int * int
-  fun priority (x, y) = x
 
-  type queue = element list
+	(* exception for signaling illegal operations on an empty queue *)
+	exception EmptyQueue
 
-  val empty = []
+	(* Element of queue is an ordered pair where the first element is the value and the second is the priority. *)
+	type 'a element = int * 'a
+	
+	(* priority: return priority value from queue element *)
+	fun priority (x, y) = x
 
-  fun put x [] = [x]
-    | put x (q as y :: ys) =
-      case Int.compare (priority x, priority y)
-       of (EQUAL | LESS) => x :: q
-        | GREATER  => y :: (put x ys)
+	(* Queue is internally represented as a list of element types. *)
+	type 'a queue = 'a element list
 
-  fun get [] = (NONE, [])
-    | get (x :: xs) = (SOME x, xs)
+	(* The empty queue is represented as an empty list. *)
+	val empty = []
+
+	(* put: put element x to queue. If putting to empty queue, priority need not be checked. *)
+	fun enqueue x [] = [x]
+	  | enqueue x (q as y :: ys) = (* If putting to non_empty queue *)
+			case Int.compare (priority x, priority y) of (EQUAL | LESS) => x :: q (* Compare priority. If priority less or equal to first element in queue, make first element. *)
+															 | GREATER  => y :: (enqueue x ys) (* else keep first element and make recursive call for tail. *)
+
+	(* front: return element at front of queue. *)														 	
+	fun front [] = raise EmptyQueue
+	  | front (x :: xs) = x
+
+
+	(* dequeue: remove front element from queue and return resulting queue. *)
+	fun dequeue [] = raise EmptyQueue
+	  | dequeue (x::xs) = xs
 end
 
-(* Implementacija prioritetne vrste s seznami. To je funktor, ki
-   sprejme tip elemetov in prioritetno funkcijo. *)
-functor ListQueue (
-    type t (* v vrsto bomo dajali elemente tipa t *)
-    val priority : t -> int
-  ) : PRIORITY_QUEUE =
-struct
-  type element = t
-  val priority = priority
+(* Example of use *)
 
-  type queue = element list
+(* Create alias to Queue structure *)
+structure Q = Queue;
 
-  val empty = []
+(* enqueue some elements *)
+val my_queue = Q.enqueue (1, "alpha") Q.empty
+val my_queue = Q.enqueue (3, "gamma") my_queue
+val my_queue = Q.enqueue (2, "beta") my_queue
 
-  fun put x [] = [x]
-    | put x (y :: ys) =
-      case Int.compare (priority x, priority y)
-       of (EQUAL | LESS) => x :: y :: ys
-        | GREATER  => y :: (put x ys)
-
-  fun get [] = (NONE, [])
-    | get (x :: xs) = (SOME x, xs)
-end
-
-(* Naredimo prioritetno vrsto nizov, prioriteta je dolžina niza. *)
-structure A =
-  ListQueue(
-      type t = string
-      val priority = String.size
-  )
-
-(* Preizkus. *)
-val example1 =
-    A.get (A.put "limona" (A.put "jabolko" (A.put "banana" A.empty)))
-
-(* Naredimo prioritetno vrsto parov števil. *)
-structure PairsQueue =
-  ListQueue(
-      type t = string
-      val priority = String.size
-  )
-
-(* Učinkovita implementacija z levičarskimi kopicami,
-   glej https://en.wikipedia.org/wiki/Leftist_tree.
-   Implementacija je abstraktna, ker uporabimo :>,
-   vendar dodamo določilo, da je tip element enak tipu t.
- *)
-functor LeftistHeapQueue (
-    type t
-    val priority : t -> int
-  ) :> PRIORITY_QUEUE where type element = t =
-struct
-   type element = t
-   val priority = priority
-
-   datatype queue = Leaf | Node of int * element * queue * queue
-
-   fun rank Leaf = 0
-     | rank (Node (r, _, _, _)) = r
-
-   fun node (x, a, b) =
-       case Int.compare (rank a, rank b)
-        of LESS => Node (1 + rank a, x, b, a)
-         | (EQUAL | GREATER) => Node (1 + rank b, x, a, b)
-
-   fun meld a b =
-       case (a, b)
-        of (_, Leaf) => a
-         | (Leaf, _) => b
-         | (Node (_, ka, la, ra), Node (_, kb, lb, rb)) =>
-           (case Int.compare (priority ka, priority kb)
-             of LESS => node (ka, la, meld ra b)
-              | (EQUAL | GREATER) => node (kb, lb, meld a rb))
-
-   fun singleton x = Node (1, x, Leaf, Leaf)
-
-   val empty = Leaf
-
-   fun put x q = meld q (singleton x)
-
-   fun get Leaf = (NONE, Leaf)
-     | get (Node (_, y, l, r)) = (SOME y, meld l r)
-end
-
-
-structure C = LeftistHeapQueue(type t = int * int
-                              fun priority (x,_) = x)
-
-val example2 =
-    let fun loop q 0 = C.put (0, 0) q
-          | loop q k = loop (C.put ((47 * k * k + 13) mod 1000, k) q) (k - 1)
-    in loop C.empty 1000
-    end
+(* retrieve some elements *)
+val next_element = Q.front my_queue
+val my_queue = Q.dequeue my_queue
+val next_next_element = Q.front my_queue
+val my_queue = Q.dequeue my_queue
