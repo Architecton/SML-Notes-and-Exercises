@@ -1,15 +1,15 @@
-(* PODATKOVNI TIP STATUS IN STATUSNA SPOROČILA *)
-type status = { (* produkt tipov *)
+type status = { (* make status an alias for a record with two named fields. *)
     version : string,
     code : int
 }
 
+(* Create a constant of type status. *)
 val my_status : status = { version = "HTTP/1.1", code = 418 };
 
-(* vrednost polja "version" spremenljivke "my_status": *)
-#version my_status;
-
-fun statusToString ( s : status ) : string =
+(* statusToString: map status to its string representation *)
+(* Note that use of sharp/projection notation is strongly discouraged... *)
+fun statusToString(s : status) : string =
+	(* Use concatenation. *)
     (#version s) ^ " " ^ Int.toString(#code s) ^ " " ^
     (case (#code s) of
           100 => "Continue"
@@ -22,8 +22,9 @@ fun statusToString ( s : status ) : string =
         | _ => "" (* neznan status *)
     )
 
-(* DATUMI *)
+(* Dates *)
 
+(* make a type date that is an alias to a record with named fields. *)
 type date = {
     dayOfWeek : string,
     dayOfMonth : int,
@@ -35,7 +36,10 @@ type date = {
     timeZone : string
 }
 
-fun dateToString ( d : date ) : string =
+
+(* dateToString: create a string representation of date type value *)
+(* Note: use of sharp notation is strongly discouraged. *)
+fun dateToString (d : date) : string =
     (#dayOfWeek d) ^ ", " ^
     Int.toString(#dayOfMonth d) ^ " " ^
     (#month d) ^ " " ^
@@ -46,14 +50,15 @@ fun dateToString ( d : date ) : string =
     (#timeZone d)
 
 (* URI *)
-
+(* Make a datatype host with three constructors. *)
 datatype host = (* vsota tipov *)
       IPV4 of int * int * int * int
     | IPV6 of string * string * string * string * string * string * string * string
     | HostName of string list
 
+(* hostToString: create a string representation of a value of host datatype *)
 fun hostToString ( h : host ) : string =
-    case h of
+    case h of (* Pattern match contructor *)
         IPV4 ipv4 => Int.toString(#1 ipv4) ^ "." ^
                      Int.toString(#2 ipv4) ^ "." ^
                      Int.toString(#3 ipv4) ^ "." ^
@@ -69,6 +74,7 @@ fun hostToString ( h : host ) : string =
                      (#8 ipv6) ^ "]"
       | HostName hn => String.concatWith "." hn
 
+(* Create a new type uri that is an alias to a record with named fields. *)
 type uri = {
     scheme : string, (* to polje je obvezno ... *)
     user : string option, (* ... ostala polja pa ne, zato dodamo "option" *)
@@ -80,23 +86,24 @@ type uri = {
     fragment : string option
 }
 
+(* pathToString: make a string representation of a path. *)
 fun pathToString ( p : string list ) : string =
-    if null p (* preverimo, če je seznam p prazen *)
-    then ""
-    else "/" ^ ( hd p ) ^ pathToString( tl p ) (* rekurzivna konkatenacija *)
+    if null p then "" (* If path is empty return empty string. *)
+    else "/" ^ ( hd p ) ^ pathToString( tl p ) (* Concatenate / with head of list and make recursive call for tail. *)
 
+(* queryToString : make a string representation of a query. *)
 fun queryToString ( q : (string * string) list ) : string =
-    if null q
-    then ""
+    if null q then "" (* If passed empty list return empty string. *)
     else (
         case q of
-              a::nil => (#1 a) ^ "=" ^ (#2 a) (* v seznamu q je le en element *)
-            | _ => (#1 (hd q)) ^ "=" ^ (#2 (hd q)) ^ "&" ^ queryToString( tl q )
+              a::nil => (#1 a) ^ "=" ^ (#2 a) (* If q contains only one element, concatenate two elements of tuples (Note use of sharp notation which is discouraged). *)
+            | _ => (#1 (hd q)) ^ "=" ^ (#2 (hd q)) ^ "&" ^ queryToString (tl q) (* Else concatenate two element of head tuple, add "&" to and and make recursive call for tail *)
     )
 
-fun uriToString ( u : uri ) : string =
-    (#scheme u) ^ ":" ^ (
-        if isSome(#host u) (* neobvezna polja preverimo, če so nastavljena *)
+(* uriToString: make a string representation of URI *)
+fun uriToString (u : uri) : string =
+    (#scheme u) ^ ":" ^ ( (* concatenate scheme to optional fields. *)
+        if isSome(#host u) (* Check if optional fields are nonempty. *)
         then (
             "//" ^ (
                 if isSome(#user u)
@@ -127,30 +134,33 @@ fun uriToString ( u : uri ) : string =
         else ""
     )
 
-(* PODATKOVNI TIP RESPONSE *)
 
-(* POLJA GLAVE *)
+(* HTTP RESPONSE *)
+
+(* HEADER FIELDS *)
 
 (* expires *)
 
+(* datatype expires with two constructors. *)
 datatype expires =
       ExpiresDate of date
-      (* POZOR: ta "Date" ne sme biti poimenovan isto kot v tipu "field" *)
+      (* Be careful: this Date must not have the same name as the one in the "field" type. *)
     | Number of int
 
-fun expiresToString ( e : expires ) : string =
+(* expiresToString: make a string representation of value of expires datatype. *)
+fun expiresToString (e : expires) : string =
     case e of
-          ExpiresDate d => dateToString(d)
-        | Number s => (* lepši izpis negativnih števil *)
+          ExpiresDate d => dateToString(d) (* Reuse already defined function *)
+        | Number s => (* Represent negative numbers with minus sign and not tilde. *)
             if s < 0
             then "-" ^ Int.toString(~s)
             else Int.toString(s)
 
-(* transfer encoding *)
-
+(* datatype transferEncoding that has 5 constructors (possible values). *)
 datatype transferEncoding = chunked | compress | deflate | gzip | identity
 
-fun transferEncodingToString ( te : transferEncoding ) : string =
+(* transferEncodingToString: make a string representation of a value of type transferEncoding. *)
+fun transferEncodingToString(te : transferEncoding) : string =
     case te of
           chunked => "chunked"
         | compress => "compress"
@@ -158,8 +168,9 @@ fun transferEncodingToString ( te : transferEncoding ) : string =
         | gzip => "gzip"
         | identity => "identity"
 
-(* polja glave *)
+(* header fields *)
 
+(* make a datatype field that has 8 constructors. *)
 datatype field =
       Server of string
     | ContentLength of int
@@ -170,7 +181,8 @@ datatype field =
     | LastModified of date
     | TransferEncoding of transferEncoding
 
-fun fieldToString ( f : field ) : string =
+(* fieldToString: make a string representation of a value of field datatype *)
+fun fieldToString (f : field) : string =
     case f of
           Server s => "Server: " ^ s
         | ContentLength cl => "Content-Length: " ^ Int.toString(cl)
@@ -184,23 +196,26 @@ fun fieldToString ( f : field ) : string =
 
 (* response *)
 
+(* Make a type response which is an alias to a record with named fields *)
 type response = {
     status : status,
     headers : field list,
     body : string
 }
 
-fun responseToString ( r : response ) : string =
+(* responseToString: make a string representation of value of response type. *)
+fun responseToString(r : response) : string =
     statusToString(#status r) ^ "\n" ^
     (String.concatWith "\n" (map fieldToString (#headers r))) ^ "\n\n" ^
     (#body r) ^ "\n\n"
 
+(* my_response: an example HTTP response *)
 val my_response : response = {
-    status = {
+    status = { (* status record *)
         version = "HTTP/1.1",
         code = 418
     },
-    headers = [
+    headers = [ (* headers list *)
         Server "gws",
         ContentLength 1024,
         ContentType "text/html; charset=UTF-8",
@@ -241,8 +256,8 @@ val my_response : response = {
         },
         TransferEncoding gzip
     ],
-    body = "Content of the web page."
-}; (* to podpičje je obvezno, saj sledi nerezervirana beseda *)
+    body = "Content of the web page." (* Body of the HTTP response - the contents of the web page. *)
+}; (* This semicolon is not optional as it is followed by a non-reserved word (print is not a declaration but an expression). *)
 
-(* prikažimo my_response *)
+(* Print string representation of response. *)
 print(responseToString my_response);
