@@ -68,6 +68,29 @@ fun take_n(s: 'a stream, n: int): 'a list =
 	|   (Null, _) 		=> raise Empty (* If stream is empty raise Empty exception *)
 	|   (Cons(h, t), n) => h :: (take_n (t(), n - 1)) (* Concatenate head to list returned by recursive call. *)
 
+(*
+Also:
+
+fun take_n (n : int) (s : 'a stream) : 'a list =
+	if n = 0 then []
+	else
+		case s of
+			Null 	   => []
+		|	Cons(h, t) => h :: take_n (n - 1) (t())
+*)
+
+(* nth: Return the nth element in the stream. *)
+fun nth (n : int) (s : 'a stream) : 'a =
+	if n = 0 then 								(* Base case: 0th element - take head *)
+		case s of
+			Null 	   => raise Empty
+		|	Cons(h, _) => h
+	else 										(* Recursive case: n-th element - take (n-1)th element of rest of stream. *)
+		case s of
+			Null => raise Empty
+		|	Cons(_, t) => nth (n - 1) (t())
+
+
 (* Filter: Produces a stream of values that satisfy a predicate. *)
 fun filter (f: 'a -> bool) (s: 'a stream) : 'a stream =
 	case s of
@@ -98,7 +121,35 @@ fun nats(n : int) = Cons(n, fn () => nats (n + 1))
 (* fib: Returns a stream that contains the Fibonacci sequence starting with a and b *)
 fun fib(a : int, b : int) = Cons(a, fn () => fib (b, a + b))
 
+(* consec: Returns am int stream where each term is the sum of all the previous terms *)
+fun consec(n : int) (acc : int) : int stream =
+	Cons(n, fn() => consec (n + acc) (acc + n))
 
+(* pows: Return a stream of powers of base to incrementing powers (incrementing by 1). *)
+(* exp is the starting exponent value. *)
+fun pows (base : int) (exp : int) : int stream =
+	let
+		(* pow_n: auxiliary function that returns n^k *)
+		fun pow_n (n : int) (k : int) : int =
+			if k = 0 then 1
+			else n * pow_n n (k - 1)
+	in
+		(* Make stream: head is base to exponent, rest of stream result of recursive call with incremented exponent. *)
+		Cons(pow_n base exp, fn () => pows base (exp + 1))
+	end
+
+(* multiples: Returns a stream of multiples of n *)
+fun multiple (n : int) : int stream = 
+	let
+		(* mult: auxiliary function that includes an additional parameter next which
+		represents the next term to be added to the list. *)
+		fun mult (m : int) (next : int) : int stream =
+			(* Head of stream is the 'next' term. Make recursive call with incremented 'next' term (by m) for rest of stream. *)
+			Cons(next, fn () => mult m (next + m))
+	in
+		(* Return resulting stream. *)
+		mult n 0
+	end
 (*
 
 The Sieve of Eratosthenes is possibly the oldest systematic method (algorithm) for generating the
