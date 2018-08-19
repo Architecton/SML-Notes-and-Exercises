@@ -189,6 +189,45 @@ fun discard_n(s : 'a stream) (n : int) : 'a stream =
 		case s of Null 		 => raise Empty (* Raise Empty exception if taking n > 0 elements from Null stream. *)
 				| Cons(h, t) => discard_n (t()) (n-1) (* discard head and make recursive call to discard n - 1 elements. *)
 
+(* zip: take two streams and return stream with terms alternatingly from stream 1 and stream 2. *)
+fun zip (s1 : 'a stream) (s2 : 'a stream) =
+	let
+		(* zip_aux: auxiliary function that alternates between stream 1 and stream 2 depending on value of parameter first *)
+		fun zip_aux (first : int) (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
+			if first = 1 then 												(* If first is equal to 1... *)
+				case s1 of
+					Null 	   => Null
+				|	Cons(h, t) => Cons(h, fn () => zip_aux 0 (t()) s2) 		(* Return head of stream 1 and get rest of stream with different value of 0 and... *)
+			else        													(* ...advanced stream 1. *)
+				case s2 of													(* Similarly if first = 0. *)
+					Null	   => Null
+				|	Cons(h, t) => Cons(h, fn () => zip_aux 1 s1 (t()))
+
+	in
+		(* Call auxiliary function. *)
+		zip_aux 1 s1 s2
+	end
+
+(* zip_n: simiar to above function. The parameter n tells how many elements in a row to take from a stream.*)
+fun zip_n (n : int) (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
+	let
+		(* zip_aux: auxiliary function that takes additional parameters: the number of elements left to add from a stream
+		and whether to take from first or second list. *)
+		fun zip_aux (first : int) (left : int) (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
+			if first = 1 andalso left > 0 then 													(* If taking from first list and more elements need to be taken... *)
+				case s1 of
+					Null 	   => Null
+				|	Cons(h, t) => Cons(h, fn () => zip_aux 1 (left-1) (t()) s2) 				(* Recursive call with decremented left for rest of stream. *)
+			else if first = 0 andalso left > 0 then
+				case s2 of
+					Null 	   => Null
+				|	Cons(h, t) => Cons(h, fn () => zip_aux 0 (left-1) s1 (t())) 				(* Recursive call with decremented left for the rest of stream *)
+			else if left = 0 andalso first = 1 then zip_aux 0 n s1 s2 							(* If no more elements to be added, reset counter and switch to other stream. *)
+			else 	zip_aux 1 n s1 s2
+	in
+		zip_aux 1 n s1 s2 			(* Call auxiliary function to get result. *)
+	end
+
 
 (* rle: encode stream using the rle encoding algorithm. Return ordered pair (int * 'a). *)
 (* NOTE: A type with two quotation marks in front of it instead of one is an equality type, which means that the = operator works on it. 
