@@ -1,4 +1,4 @@
-(* glej tudi https://www.cs.cornell.edu/courses/cs312/2007fa/lectures/lec14.html *)
+(* see also https://www.cs.cornell.edu/courses/cs312/2007fa/lectures/lec14.html *)
 
 type height = int
 type value = int
