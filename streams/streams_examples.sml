@@ -228,6 +228,43 @@ fun zip_n (n : int) (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
 		zip_aux 1 n s1 s2 			(* Call auxiliary function to get result. *)
 	end
 
+(* unzip: take stream and return ordered pair of streams where the first stream contains the odd elements in stream and second stream even elements of stream. *)
+fun unzip (s : 'a stream) : ('a stream * 'a stream) =
+	let
+		(* skip: auxiliary function that takes a stream and returns a stream with first n elements removed *)
+		fun skip (n : int) (s : 'a stream) : 'a stream =
+			if n = 0 then s
+			else
+				case s of
+					Null 	   => Null
+				|	Cons(h, t) => skip (n - 1) (t())
+
+		(* hd_stream: auxiliary function that takes a stream and returns the head element. *)
+		fun hd_stream (s : 'a stream) : 'a =
+			case s of
+				Null 	   => raise Empty
+			|	Cons(h, _) => h
+
+		(* odd: make a stream of odd elements in stream s *)
+		fun odd (s : 'a stream) : 'a stream =
+			case s of
+				Null 	   => Null
+			|	Cons(h, t) => Cons(h, fn () => odd (skip 1 (t()))) (* add head of stream s to stream and make recursive call for stream with one element skipped. *)
+
+		(* even: make a stream of even elements in stream s *)
+		fun even (s : 'a stream) : 'a stream =
+			case s of
+				Null => Null
+			|	Cons(h, t) => Cons(hd (t()), fn () => even (skip 1 (t()))) 	(* skip head of stream s and add element after head to stream. Make recursive call
+																				for stream with one element skipped. *)
+	in
+		(* apply axuliary functions to obtain result. *)
+		(* NOTE: the same functionality could easily be achieved with just one auxiliary function every_other and call (every_other s, every_other (skip 1 s)) 
+		in body.*)
+		(odd s, even s)
+	end
+
+
 
 (* rle: encode stream using the rle encoding algorithm. Return ordered pair (int * 'a). *)
 (* NOTE: A type with two quotation marks in front of it instead of one is an equality type, which means that the = operator works on it. 
@@ -254,8 +291,18 @@ fun rle(s : ''a stream) : (int * ''a) stream =
 		and make ordered pair (num_repetitions, element). Then make recursive call on stream with removed string of elements equal to head. *)
 	end
 
-(* multiples: create stream of multiples of n *)
-
 (* fold_n: perform fold on first n elements of list. *)
+fun fold_n (n : int) (f : 'a * 'b -> 'b) (acc : 'b) (s : 'a stream) : 'b =
+	if n = 0 then acc 															(* Base case: n = 0 *)
+	else
+		case s of
+			Null 	   => acc 													(* Base case: the stream ran out *)
+		|	Cons(h, t) => fold_n (n - 1) f (f(h, acc)) (t()) 					(* Recursive case: call fold with (n - 1), manipulated accumulator and rest of stream. *)
 
-(* fold_n: perform fold operation on stream and return stream of accumulator values. *)
+
+(* fold_stream: perform fold operation on stream and return stream of accumulator values. *)
+fun fold_stream (f : 'a * 'b -> 'b) (acc : 'b) (s : 'a stream) : 'b stream =
+	case s of
+		Null 	   => Null 															(* Base case: the stream ran out *)
+	|	Cons(h, t) => Cons(f(h, acc), fn () => fold_stream f (f(h, acc)) (t())) 	(* Recursive case: head of stream is manipulated accumulator. Make recursive call for
+																					   for rest of stream. *)
