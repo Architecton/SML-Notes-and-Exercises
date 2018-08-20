@@ -128,3 +128,26 @@ fun print_one_child (s : searchtree) : unit =
 	|	Node(el, l, Empty) 	   => (print ((Int.toString el) ^ " "); print_one_child l)
 	|	Node(el, Empty, r) 	   => (print ((Int.toString el) ^ " "); print_one_child r)
 	|	Node(el, l, r)	   	   => (print_one_child l; print_one_child r)
+
+(* max: return maximum element in tree *)
+
+(* min: return minumum element in tree *)
+
+(* print_less: print all nodes with element less than a given value *)
+
+(* heigh: return height of tree (maximum number of nodes on a path from a root to a leaf node) *)
+
+(* min_cost: return path with least cost (path where sum of elements in nodes is minimal) *)
+
+(* max_cost: return path with maximal cost (path where sum of elements in nodes is maximal) *)
+
+(*
+
+A binary tree is said to be "balanced" if both of its subtrees  
+are balanced and the height of its left subtree differs from the
+height of its right subtree by at most 1.  Write a C function to
+determine whether a given binary tree is balanced.
+
+*)
+
+(* is_balanced: return true if passed tree is balanced and false otherwise. *)
