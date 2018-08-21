@@ -1,5 +1,4 @@
-21. 8. 2017:
-    - Finish exercises in BST,
+21. 8. 2017:                
     - review datatypes and signatures/structures.
     - review streams
     - review ref, file_IO, options

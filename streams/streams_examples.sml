@@ -208,7 +208,7 @@ fun zip (s1 : 'a stream) (s2 : 'a stream) =
 		zip_aux 1 s1 s2
 	end
 
-(* zip_n: simiar to above function. The parameter n tells how many elements in a row to take from a stream.*)
+(* zip_n: simiar to above function. The parameter n tells how many elements in a row to take from each stream.*)
 fun zip_n (n : int) (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
 	let
 		(* zip_aux: auxiliary function that takes additional parameters: the number of elements left to add from a stream
@@ -264,8 +264,6 @@ fun unzip (s : 'a stream) : ('a stream * 'a stream) =
 		(odd s, even s)
 	end
 
-
-
 (* rle: encode stream using the rle encoding algorithm. Return ordered pair (int * 'a). *)
 (* NOTE: A type with two quotation marks in front of it instead of one is an equality type, which means that the = operator works on it. 
 That also means that you can't call your function on things that are not equality types,  though.*)
@@ -290,6 +288,29 @@ fun rle(s : ''a stream) : (int * ''a) stream =
 		|	Cons(h, t) => Cons((count_next h s, h), fn () => rle (go_to_next h (t()))) (* Count length of string of elements equal to next element in stream 
 		and make ordered pair (num_repetitions, element). Then make recursive call on stream with removed string of elements equal to head. *)
 	end
+
+(* rle_decode: take a stream of ordered pairs (int * 'a) where the first element is the number of repetitions of element at second position and
+return a stream representing the decoded data (convert each ordered pair to n repetitions of elements and add to stream). *)
+fun rle_decode (s: (int * 'a) stream ) : 'a stream =
+	let
+		(* make_stream: auxiliary function that takes pair encoding n repetitions of an element and return stream of n repetitions of the element. *)
+		fun make_stream (n : int, el : 'a) : 'a stream =
+			if n = 0 then Null 										(* Base case: If no repetitions, return Null stream. *)
+			else Cons(el, fn () => make_stream(n - 1, el)) 			(* Recursive case: add element to head of stream and make recursive call with n-1 for rest of stream *)
+
+		(* concat: auxiliary function that takes two streams and concatenates them into a single stream. *)
+		fun concat (s1 : 'a stream) (s2 : 'a stream) : 'a stream =
+			case s1 of
+				Null => s2 											(* Base case: if first stream is empty, return second stream. *)
+			|	Cons(h, t) => Cons(h, fn () => concat (t()) s2) 	(* Recursive case: add head of first stream to resulting stream and make recursive call. *)
+	in
+		case s of
+			Null => Null 											(* Base case: stream s is empty - return null stream. *)
+		|	Cons(h, t) => concat (make_stream h) (rle_decode (t())) (* Recursive case: concatenate stream from decoded tuple and concatenate with *)
+	end 															(* result of recursive call for rest of stream. *)
+
+(* An explicitly defined stream for testing the rle_decode function. *)
+val rle_decode_example_stream : (int * string) stream = Cons((2, "r"), fn () => Cons((5, "I"), fn () => Cons((2, "X"), fn () => Null)))
 
 (* fold_n: perform fold on first n elements of list. *)
 fun fold_n (n : int) (f : 'a * 'b -> 'b) (acc : 'b) (s : 'a stream) : 'b =

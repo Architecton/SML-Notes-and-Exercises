@@ -129,17 +129,37 @@ fun print_one_child (s : searchtree) : unit =
 	|	Node(el, Empty, r) 	   => (print ((Int.toString el) ^ " "); print_one_child r)
 	|	Node(el, l, r)	   	   => (print_one_child l; print_one_child r)
 
-(* max: return maximum element in tree *)
+exception EmptyTree
 
-(* min: return minumum element in tree *)
+(* max: return maximum element in tree *)
+fun max (s : searchtree) : int =
+	case s of
+		Node(el, Empty, Empty) => el
+	|	Node(el, l, Empty) 	   => Int.max(el, max l)
+	|	Node(el, Empty, r)	   => Int.max(el, max r)
+	|	Node(el, l, r)		   => Int.max(Int.max(el, max l), max r)
+	|	Empty 				   => raise EmptyTree
 
 (* print_less: print all nodes with element less than a given value *)
+fun print_less (lim : int) (s : searchtree) : unit =
+	case s of
+		Empty 		   => ()
+	|	Node(el, l, r) => (if el < lim then print((Int.toString el) ^ " ") else (); print_less lim l; print_less lim r)
 
 (* heigh: return height of tree (maximum number of nodes on a path from a root to a leaf node) *)
+fun height (s : searchtree) : int =
+	case s of
+		Empty 		  => 0
+	|	Node(_, l, r) => 1 + Int.max(height l, height r) 		
 
 (* min_cost: return path with least cost (path where sum of elements in nodes is minimal) *)
-
-(* max_cost: return path with maximal cost (path where sum of elements in nodes is maximal) *)
+fun min_cost (s : searchtree) : int =
+	case s of
+		Node(el, Empty, Empty) => el
+	|	Node(el, l, Empty)	   => el + min_cost l
+	|	Node(el, Empty, r)	   => el + min_cost r
+	|	Node(el, l, r) 		   => el + Int.min(min_cost l, min_cost r)
+	|	Empty 				   => raise EmptyTree
 
 (*
 
@@ -151,3 +171,7 @@ determine whether a given binary tree is balanced.
 *)
 
 (* is_balanced: return true if passed tree is balanced and false otherwise. *)
+fun is_balanced (s : searchtree) : bool =
+	case s of
+		Empty 		   => true 																		(* An empty tree is balanced. *)
+	|	Node(_, l, r)  => abs(height l - height r) <= 1 andalso is_balanced l andalso is_balanced r (* Check if conditions for balance are met. *)
