@@ -1,4 +1,2 @@
-21. 8. 2017:                
+22. 8. 2017
     - review datatypes and signatures/structures.
-    - review streams
-    - review ref, file_IO, options

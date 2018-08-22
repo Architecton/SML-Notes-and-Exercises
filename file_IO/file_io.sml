@@ -6,7 +6,7 @@ fun write_poem(filename) =
         val _ = TextIO.output(file, "This is just a simple test!") (* Write another string to a file referenced by file. *)
     in 
         (* Close file reference. *)
-        TextIO.closeOut(file)
+        TextIO.closeOut file
     end
 
 (* read_poem: read text from a file into a list of strings. *)

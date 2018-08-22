@@ -175,3 +175,15 @@ fun is_balanced (s : searchtree) : bool =
 	case s of
 		Empty 		   => true 																		(* An empty tree is balanced. *)
 	|	Node(_, l, r)  => abs(height l - height r) <= 1 andalso is_balanced l andalso is_balanced r (* Check if conditions for balance are met. *)
+
+(* map: apply function f to every element in each node and return the resulting tree. *)
+fun map (f : int -> int) (s : searchtree) : searchtree =
+	case s of
+		Empty 		   => Empty
+	|	Node(el, l, r) => Node(f el, map f l, map f r)
+
+(* app: apply function f to every element in each node and return the resulting tree. *)
+fun app (f : int -> unit) (s : searchtree) : unit =
+	case s of
+		Empty => ()
+	|	Node(el, l, r) => (f el; app f l; app f r)
