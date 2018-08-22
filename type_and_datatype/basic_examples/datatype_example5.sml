@@ -1,5 +1,5 @@
 (* Declare datatype that represents a person's sex. *)
-datatype sex = Male | Female;
+datatype sex = Male | Female
 
 (* Declare a datatype person_record that represents a person's data record. *)
 datatype person_record = Person_record of {
@@ -19,7 +19,7 @@ val p1 : person_record = Person_record{
 
 (* Check if person is a minor. *)
 (* Note optional explicit return type declaration *)
-fun is_minor(Person_record{first_name, last_name, age, sex}) : bool = age < 18;
+fun is_minor(Person_record{first_name, last_name, age, sex}) : bool = age < 18
 
 (* Another implementation of the function that checks if the person is a minor *)
 fun is_minor2(p : person_record) =
@@ -32,18 +32,18 @@ fun is_minor3(p : person_record) =
 		  Person_record x => #age x < 18
 
 (* Function that checks if a person is fit for military service. *)
-fun fit_for_service(Person_record{first_name, last_name, age, sex}) = age >= 18 andalso sex = Male;
+fun fit_for_service(Person_record{first_name, last_name, age, sex}) = age >= 18 andalso sex = Male
 
 (* Another implementation of a function that checks if a person is fit for military service. *)
 fun fit_for_service2(p : person_record) =
 	case p of
-		  Person_record x => #age x >= 18 andalso #sex x = Male;
+		  Person_record x => #age x >= 18 andalso #sex x = Male
 
 (* Yet another function that checks if a person is fit for military service *)
 (* Optional return type specification *)
 fun fit_for_service3(p : person_record) : bool =
 	case p of
-		  Person_record{first_name, last_name, age, sex} => age >= 18 andalso sex = Male;
+		  Person_record{first_name, last_name, age, sex} => age >= 18 andalso sex = Male
 
 (* Yet another function that checks if a person is fit for military service. *)
-val fit_for_service4 = (fn Person_record{first_name, last_name, age, sex} => age >= 18 andalso sex = Male);
+val fit_for_service4 = (fn Person_record{first_name, last_name, age, sex} => age >= 18 andalso sex = Male)

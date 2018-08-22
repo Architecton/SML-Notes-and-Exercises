@@ -1,6 +1,6 @@
 datatype complex = Complex of (real * real);
 
-val c = Complex(2.12, 7.19);
+val c = Complex(2.12, 7.19)
 
 (* Functions that return the real/complex part of the complex number *)
 fun get_re(Complex(re,_)) = re	

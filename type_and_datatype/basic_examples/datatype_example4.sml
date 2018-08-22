@@ -26,5 +26,4 @@ fun fit_for_service(p : person_record) =
 	#age p >= 18 andalso #sex p = Male
 
 (* Another implementation of the function that checks if the person if fit for military service *)
-
 val fit_for_service2 = (fn p : person_record => #age p >= 18 andalso #sex p = Male);
