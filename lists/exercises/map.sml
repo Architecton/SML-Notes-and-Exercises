@@ -1,5 +1,5 @@
 (* Define a function double that doubles an integer value. *)
-val double = fn x => 2*x;
+val double = fn x => 2*x
 
 (* Create a list of integers for testing. *)
 val test_list = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -18,8 +18,12 @@ val squared = List.map sqr test_list;
 fun map f [] = []
   | map f (x::xs) = f(x) :: map f xs
 
-(* Define a function that increments an integer value, *)
-fun add_one x = x + 1;
 
-(* Apply function add_one to every element in test_list *)
-val incremented_list = map add_one test_list;
+(* Apply function that increments value by one to every element in test_list *)
+val incremented_list = map (fn x => x + 1) test_list;
+
+
+(* Another map version *)
+fun map(f, l) =
+	if null l then []
+	else f (hd l) :: map(f, tl l)

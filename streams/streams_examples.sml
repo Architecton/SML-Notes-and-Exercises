@@ -39,7 +39,7 @@ fun const(c: 'a) = Cons (c, fn() => const c)
 
 (* Define an exception for signaling an empty stream *)
 exception Empty
-
+	
 (* hd: Returns the first element of a stream. *)
 fun hd(s: 'a stream): 'a =
 	case s of

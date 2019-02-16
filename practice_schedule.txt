@@ -1,0 +1,20 @@
+mon:
+ - lists
+
+tue:
+ - lists
+
+wed:
+ - higher_order_functions, currying
+
+thur:
+ - misc
+
+fri:
+ - signature_and_structure
+
+sat:
+ - type_and_datatype, streams
+
+sun:
+ - streams

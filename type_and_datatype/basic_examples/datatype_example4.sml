@@ -1,5 +1,5 @@
 (* Declare new datatype representing a person's sex *)
-datatype sex = Male | Female;
+datatype sex = Male | Female
 
 (* Declare new type *)
 type person_record = {

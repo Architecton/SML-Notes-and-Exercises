@@ -1,4 +1,8 @@
+(* Define a new type constructor *)
+
 datatype complex = Complex of (real * real);
+
+(* Define a new variable of type Complex *)
 
 val c = Complex(2.12, 7.19)
 

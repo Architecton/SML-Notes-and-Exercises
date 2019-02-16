@@ -1,2 +1,0 @@
-22. 8. 2017
-    - review datatypes and signatures/structures.
