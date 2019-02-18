@@ -1,8 +1,14 @@
-(* filter1: take predicate and list and return list of elements for which predicate is true *)
+(* filter: take predicate and list and return list of elements for which predicate is true *)
 fun filter pred [] = []
   | filter pred (x::xs) =
   	if pred x then x :: filter pred xs
   	else filter pred xs
+
+(* Alternative Implementation *)
+fun filter1(pred, l) : int list =
+	if null l then []
+	else if pred(hd l) then hd l :: filter1(pred, tl l)
+	else filter1(pred, tl l)
 
 (* ## Examples of use ## *)
 

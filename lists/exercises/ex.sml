@@ -1,3 +1,3 @@
-fun map(f, l) =
+fun map(f, l) : 'a list =
 	if null l then []
-	else f (hd l) :: map(f, tl l)
+	else f(hd l) :: map(f, tl l)

@@ -15,11 +15,16 @@ negative_values = list(filter(lambda x: x < 0, test_list))
 
 ### Filter with currying ###
 
+# 
+from functools import partial
+pos = partial(filter, lambda x: x > 0)
+positive_values1 <- pos([1, 2, 3, 4, 5, 6])
+
+# Another implementation
 def filt(pred):
 	def flt(l):
 		return list(filter(pred, l))
 	return flt
-
 
 negative = filt(lambda x : x < 0) ([1, 2, 3, -1, -2])
 
