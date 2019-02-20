@@ -286,7 +286,7 @@ fun max(xs : int list) =
 	let
 		fun compare(a : int, b : int) : int = if a > b then a else b
 	in
-		if null xs then 0
+		if null xs then ~1000000000
 		else compare(hd xs, max(tl xs))
 	end 
 
@@ -306,7 +306,7 @@ fun index_max(xs : int list) : int =
 		val max_val = max(xs);
 	in
 		index(max_val, xs)
-	add_end
+	end
 
 (* Construct a function index_min which returns the index of the smallest element in the list of integers xs *)
 fun index_min(xs: int list) : int =

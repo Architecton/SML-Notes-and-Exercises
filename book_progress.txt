@@ -1,0 +1,8 @@
+Goals: 1.7.2019 - finish part II
+
+Chapter 1 - Programming in Standard ML
+Chapter 2 - Types, Values, and Effects
+Chapter 3 - Declarations
+
+
+19.2.2019 - Finish First second chapter
