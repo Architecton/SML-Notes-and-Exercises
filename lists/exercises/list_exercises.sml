@@ -148,24 +148,33 @@ fun is_palindrome (xs : int list) =
 	equal(xs, reverse(xs))
 
 (* Construct a function combine_integers which takes a list of integers and combines the digits into a single integer *)
-fun combine_integers(xs : int list) =
+fun combine_integers(l : int list) : int =
 	let
-		fun list_length(xs: int list) =
-			if null xs then 0
-			else 1 + list_length(tl xs)
-
-		val l_len = list_length(xs);
-
-		fun power10(n : int) =
-			if n = 0 then
-				1
-			else 10 * power10(n - 1)
-
-		fun combine_integers_aux (l : int list, num : int) =
+		(* list_len: return length of list of integers *)
+		fun list_len(l : int list) : int =
 			if null l then 0
-			else power10(l_len - num) * (hd l) + combine_integers_aux(tl l, num - 1)
+			else 1 + list_len(tl l)
+
+		(* pow10: return 10^n *)
+		fun pow10(n : int) : int =
+			if n = 0 then 1
+			else 10 * pow10(n-1)
+
+		(* num_digits: get num digits in number i. In first call carry should be set to 1. *)
+		fun num_digits(i: int, carry: int) : int =  
+			if i < 10 then carry else num_digits(i div 10, carry + 1)
+
+		(* reverse_list: reverse a list *)
+		fun reverse_list [] = []
+		  | reverse_list [el] = [el]
+		  | reverse_list (x::xs) = reverse_list(xs) @ [x]
+
+		  val r_list = reverse_list l
+
 	in
-		combine_integers_aux(reverse(xs), l_len)
+		if null r_list then 0
+		else if  null (tl r_list) then hd r_list
+		else hd r_list + pow10(num_digits(hd r_list, 1))*combine_integers(reverse_list (tl r_list))
 	end
 
 (* Construct a function is_sorted_asc which returns true if the list of integers xs is sorted in ascending order *)

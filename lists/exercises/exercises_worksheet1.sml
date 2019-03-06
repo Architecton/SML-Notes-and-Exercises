@@ -34,7 +34,7 @@ fun right(el, l) =
 fun split(l) = [[hd l], tl l]
 
 
-(** Construct a function is_sublist which checks if xs is a sublist of ys *)
+(*** Construct a function is_sublist which checks if xs is a sublist of ys *)
 
 fun is_sublist(xs, ys) : bool =
 	let
@@ -94,7 +94,7 @@ fun expand(el, n) =
 fun sum_list [] = 0
   | sum_list (x::xs) = x + sum_list xs
 
-(** Construct a function reverse_list which reverses the list of integers xs*)
+(*** Construct a function reverse_list which reverses the list of integers xs*)
 fun reverse_list(xs : int list) : int list =
 	let
 		fun concat(a : int list, b : int list) : int list =
@@ -131,13 +131,66 @@ fun is_palindrome(xs : int list) : bool =
 	end
 
 
-(* Construct a function combine_integers which takes a list of integers and combines the digits into a single integer *)
+(*** Construct a function combine_integers which takes a list of integers and combines the digits into a single integer *)
+fun combine_integers(l : int list) : int =
+	let
+		(* list_len: return length of list of integers *)
+		fun list_len(l : int list) : int =
+			if null l then 0
+			else 1 + list_len(tl l)
 
-(* Construct a function is_sorted_asc which returns true if the list of integers xs is sorted in ascending order *)
+		(* pow10: return 10^n *)
+		fun pow10(n : int) : int =
+			if n = 0 then 1
+			else 10 * pow10(n-1)
+
+		(* num_digits: get num digits in number i. In first call carry should be set to 1. *)
+		fun num_digits(i: int, carry: int) : int =  
+			if i < 10 then carry else num_digits(i div 10, carry + 1)
+
+		(* reverse_list: reverse a list *)
+		fun reverse_list [] = []
+		  | reverse_list [el] = [el]
+		  | reverse_list (x::xs) = reverse_list(xs) @ [x]
+
+		  val r_list = reverse_list l
+
+	in
+		if null r_list then 0
+		else if  null (tl r_list) then hd r_list
+		else hd r_list + pow10(num_digits(hd r_list, 1))*combine_integers(reverse_list (tl r_list))
+	end
+
+(** Construct a function is_sorted_asc which returns true if the list of integers xs is sorted in ascending order *)
+fun is_sorted_asc(xs : int list) : bool =
+	if null xs then true
+	else if null (tl xs) then true
+	else if hd xs <= hd (tl xs) then is_sorted_asc(tl xs)
+	else false
 
 (* Construct a function is_sorted_desc which returns true if the list of integers xs is sorted in ascending order *)
+fun is_sorted_desc(xs : int list) : bool =
+	if null xs then true
+	else if null (tl xs) then true
+	else hd xs > hd (tl xs) andalso is_sorted_desc(tl xs)
 
 (* Construct a function all_primes which returns true if all elements of the list of integers xs are primer numbers *)
+fun all_primes(xs : int list) : bool =
+	let
+		fun is_prime(k : int) : bool =
+			let
+				fun is_prime_aux(k : int, s : int) : bool =
+					if real(s) >= Math.sqrt(real(k)) then true
+					else if k mod s = 0 then false
+					else is_prime_aux(k, s+1)
+			in
+				is_prime_aux(k, 2)
+			end
+	in
+		if null xs then false
+		else if null (tl xs) then is_prime (hd xs)
+		else is_prime (hd xs) andalso all_primes(tl xs)
+	end
 
 (* Construct a function every_second that returns every second element in the list of integers xs *)
 
@@ -160,12 +213,6 @@ fun is_palindrome(xs : int list) : bool =
 (* Construct a function index_max which returns the index of the largest element in the list of integers xs *)
 
 (* Construct a function index_min which returns the index of the smallest element in the list of integers xs *)
-
-(* Construct a function selection_sort which performs the recursive implementation of the selection sort sorting algorithm on the list of integers xs *)
-
-(* Construct a function insertion_sort which performs the recursive implementation of the insertion sort sorting algorithm on the list of integers xs *)
-
-(* Construct a function bubble_sort which performs the recursive implementation of the bubble sort sorting algorithm on the list of integers xs *)
 
 (* Construct a function rle which encodes a list of characters using the run-length encoding algorithm.*)
 

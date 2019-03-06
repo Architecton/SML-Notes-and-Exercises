@@ -159,7 +159,7 @@ def combine_integers(l):
 	if len(l) == 1:
 		return l[0]
 	else:
-		return l[len(l)-1] + 10**(len(str(l[len(l)-1])))*combine_integers(l[:len(l)-1])
+		return l[-1] + 10**(len(str(l[-1])))*combine_integers(l[:len(l)-1])
 
 
 # (* Construct a function is_sorted_asc which returns true if the list of integers xs is sorted in ascending order *)
