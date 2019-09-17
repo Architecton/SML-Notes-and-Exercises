@@ -2,3 +2,6 @@
 * Chapter 2 - Types, Values, and Effects
 * Chapter 3 - Declarations
 Chapter 4 - Functions
+
+
+End of semester --> up to part III

@@ -1,3 +1,5 @@
+daily: fold, filter, map
+
 mon:
  - lists, streams
 
