@@ -1,8 +1,8 @@
 mon:
- - lists
+ - lists, streams
 
 tue:
- - lists
+ - lists, streams
 
 wed:
  - higher_order_functions, currying

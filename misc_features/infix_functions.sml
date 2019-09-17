@@ -19,3 +19,6 @@ fun a minus b = a - b;
 (* Infix functions can be made prefix with the op keyword/function *)
 op times(12, 5);
 op minus(5, 7);
+
+(* Use the + function as a prefix function. *)
+op +(2, 3)

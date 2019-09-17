@@ -86,12 +86,8 @@ fun delete_all (el : int, xs : int list) =
 
 (* Construct a function all_equal which returns true if all integers in the list of integers xs are equal and false otherwise *)
 fun all_equal(xs : int list) =
-	if null xs
-	then true
-	else if null (tl xs)
-	then true
-	else if hd xs = hd (tl xs)
-	then all_equal(tl xs)
+	if null xs orelse null (tl xs) then true
+	else if hd xs = hd (tl xs) then all_equal(tl xs)
 	else false
 
 (* Construct a function is_longer that checks if list of integers xs is longer than list of integers ys *)
@@ -325,12 +321,8 @@ fun index_min(xs: int list) : int =
 		index(min_val, xs)
 	end
 
-(* Construct a function selection_sort which performs the recursive implementation of the selection sort sorting algorithm on the list of integers xs *)
-
-(* Construct a function insertion_sort which performs the recursive implementation of the insertion sort sorting algorithm on the list of integers xs *)
-
-(* Construct a function bubble_sort which performs the recursive implementation of the bubble sort sorting algorithm on the list of integers xs *)
-
 (* Construct a function rle which encodes a list of characters using the run-length encoding algorithm.*)
 
 (* Construct a function mat_multiply which takes two matrices represented as lists of lists and returns their matrix product.*)
+
+
